@@ -11,19 +11,21 @@
 
 %% included for writing to ejabberd log file
 -include("ejabberd.hrl").
+-include("logger.hrl").
 
 %% ejabberd functions for JID manipulation called jlib.
 -include("jlib.hrl").
 %%add and remove hook module on startup and close
 
 start(Host, _Opts) ->
-    ejabberd_hooks:add(filter_packet, Host, ?MODULE, on_user_send_packet, 0).
+    ejabberd_hooks:add(filter_packet, global, ?MODULE, on_user_send_packet, 0).
 
 stop(Host) ->
-    ejabberd_hooks:delete(filter_packet, Host, ?MODULE, on_user_send_packet, 0),
+    ejabberd_hooks:delete(filter_packet, global, ?MODULE, on_user_send_packet, 0),
     ok.
 
 on_user_send_packet(From, To, Packet) ->
+    ?INFO_MSG(" Hello World ", []),
     Type = xml:get_tag_attr_s(<<"type">>,Packet),
     case Type of
         <<"location">> ->
